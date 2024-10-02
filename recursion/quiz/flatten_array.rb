@@ -10,7 +10,7 @@ def flatten_array!(arr)
 
     arr_data = arr.delete_at(index)
 
-    arr_data.each_with_index { |x, i| arr.insert(index + i, x) }
+    arr_data&.each_with_index { |x, i| arr.insert(index + i, x) }
 
     flatten_array!(arr)
   end
