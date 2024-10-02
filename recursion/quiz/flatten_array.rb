@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# Flattens an array in place
 def flatten_array!(arr)
   raise ArgumentError, 'Only arrays are allowed' unless arr.is_a? Array
 
