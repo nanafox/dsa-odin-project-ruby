@@ -266,6 +266,16 @@ RSpec.describe 'LinkedList' do
 
         expect(list.tail&.next_node).to eq(nil)
       end
+
+      it 'inserts node at the end if the index is greater than the size' do
+        list.insert_at(100, 'rabbit')
+        expect(list.tail&.value).to eq('rabbit')
+      end
+
+      it 'inserts node at the end when the index is the same as the size' do
+        list.insert_at(list.size, 'rabbit')
+        expect(list.tail&.value).to eq('rabbit')
+      end
     end
 
     describe 'insertion at a particular index in the list' do
