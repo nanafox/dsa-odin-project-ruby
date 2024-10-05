@@ -174,41 +174,6 @@ class LinkedList
     nil
   end
 
-  # rubocop:disable Metrics/AbcSize
-
-  # Inserts a new node with the given value at the specified index.
-  #
-  # @note For an index that is greater than the size of the list, the new node
-  #   is appended. Negative indices are not supported.
-  #
-  # @param index [Integer] the index at which to insert the new node.
-  # @param value [Object] the value of the new node.
-  # @return [Node, nil] the newly inserted node or nil if the index is invalid.
-  def insert_at(index, value)
-    return nil if index.negative?
-
-    return prepend(value) if index.zero?
-    return append(value) if index == size - 1
-
-    current_index = 0
-    temp_head = head
-
-    while current_index < index - 1
-      current_index += 1
-      temp_head = temp_head&.next_node
-    end
-
-    node = Node.new(value)
-    node.next_node = temp_head&.next_node
-    temp_head&.next_node = node
-
-    @size += 1
-
-    node
-  end
-
-  # rubocop:enable Metrics/AbcSize
-
   # Removes the node at the specified index.
   # @param index [Integer] the index of the node to remove.
   # @return [Boolean] true if the node was removed, false otherwise.
@@ -231,6 +196,29 @@ class LinkedList
   end
 
   # rubocop:enable Metrics/MethodLength
+
+  # Inserts a new node with the given value at the specified index.
+  #
+  # @note For an index that is greater than the size of the list, the new node
+  #   is appended. Negative indices are not supported.
+  #
+  # @param index [Integer] the index at which to insert the new node.
+  # @param value [Object] the value of the new node.
+  # @return [Node, nil] the newly inserted node or nil if the index is invalid.
+  def insert_at(index, value)
+    return nil if index.negative?
+
+    return prepend(value) if index.zero?
+    return append(value) if index == size - 1 || index >= size
+
+    node = Node.new(value, at(index))
+    prev_node = at(index - 1) || head
+    prev_node.next_node = node
+
+    @size += 1
+
+    node
+  end
 
   private
 
