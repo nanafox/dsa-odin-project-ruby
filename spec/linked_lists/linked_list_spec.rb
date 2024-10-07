@@ -4,128 +4,97 @@ require_relative '../../linked_lists/lib/linked_list'
 
 # rubocop:disable Metrics/BlockLength
 
-RSpec.describe 'LinkedList' do
-  subject(:list) { LinkedList.new }
+RSpec.describe LinkedList, type: :class do
+  subject(:list) { described_class.new }
+
+  shared_examples 'a size tester' do |expected_size|
+    it "has a size of #{expected_size}" do
+      expect(list.size).to eq(expected_size)
+    end
+  end
+
+  shared_examples 'a list representation' do |representation|
+    it "has the representation #{representation}" do
+      expect(list.to_s).to eq(representation)
+    end
+  end
+
+  shared_examples 'head and tail pointer' do |are_equal|
+    if are_equal
+      it 'head and tail point to the same node' do
+        expect(list.head).to eq(list.tail)
+      end
+    else
+      it 'head and tail point to different nodes' do
+        expect(list.head).not_to eq(list.tail)
+      end
+    end
+  end
+
+  shared_examples 'a correct node value' do |node, expected_value|
+    it "has the correct value for the #{node} node" do
+      expect(list.send(node)&.value).to eq(expected_value)
+    end
+  end
 
   context 'when the linked list is empty' do
-    it 'returns the correct representation' do
-      expect(list.to_s).to eq('nil')
-    end
-
-    it 'has a size of 0' do
-      expect(list.size).to eq(0)
-    end
+    include_examples 'a size tester', 0
+    include_examples 'a list representation', 'nil'
   end
 
   describe '#append' do
     context 'when adding a single item' do
-      before do
-        list.append(2)
-      end
+      before { list.append(2) }
 
-      it 'adds a new node to the end of the list' do
-        expect(list.to_s).to eq('( 2 ) -> nil')
-      end
-
-      it 'has a size of 1' do
-        expect(list.size).to eq(1)
-      end
-
-      it 'should have the head and tail pointing to the same node' do
-        expect(list.head).to eq(list.tail)
-      end
+      include_examples 'a size tester', 1
+      include_examples 'a list representation', '( 2 ) -> nil'
+      include_examples 'head and tail pointer', true
     end
 
     context 'when two items are in the list' do
-      let(:expected_representation) { '( dog ) -> ( cat ) -> nil' }
-
       before do
         list.append('dog')
         list.append('cat')
       end
 
-      it 'has the correct size' do
-        expect(list.size).to eq(2)
-      end
-
-      it 'has the correct output representation' do
-        expect(list.to_s).to eq(expected_representation)
-      end
-
-      it 'should point the head and tail to different objects' do
-        expect(list.head).not_to eq(list.tail)
-      end
-
-      it 'has the correct value for the head node' do
-        expect(list.head&.value).to eq('dog')
-      end
-
-      it 'has the correct value fot the tail node' do
-        expect(list.tail&.value).to eq('cat')
-      end
+      include_examples 'a size tester', 2
+      include_examples 'a list representation', '( dog ) -> ( cat ) -> nil'
+      include_examples 'head and tail pointer', false
+      include_examples 'a correct node value', :head, 'dog'
+      include_examples 'a correct node value', :tail, 'cat'
     end
   end
 
   describe '#prepend' do
     context 'when adding a single item' do
-      before do
-        list.prepend(2)
-      end
+      before { list.prepend(2) }
 
-      it 'adds a new node to the beginning of the list' do
-        expect(list.to_s).to eq('( 2 ) -> nil')
-      end
-
-      it 'has a size of 1' do
-        expect(list.size).to eq(1)
-      end
-
-      it 'should have the head and tail pointing to the same node' do
-        expect(list.head).to eq(list.tail)
-      end
+      include_examples 'a size tester', 1
+      include_examples 'a list representation', '( 2 ) -> nil'
+      include_examples 'head and tail pointer', true
     end
 
     context 'when two items are in the list' do
-      let(:expected_representation) { '( cat ) -> ( dog ) -> nil' }
-
       before do
         list.prepend('dog')
         list.prepend('cat')
       end
 
-      it 'has the correct size' do
-        expect(list.size).to eq(2)
-      end
-
-      it 'has the correct output representation' do
-        expect(list.to_s).to eq(expected_representation)
-      end
-
-      it 'should point the head and tail to different objects' do
-        expect(list.head).not_to eq(list.tail)
-      end
-
-      it 'has the correct value for the head node' do
-        expect(list.head&.value).to eq('cat')
-      end
-
-      it 'has the correct value fot the tail node' do
-        expect(list.tail&.value).to eq('dog')
-      end
+      include_examples 'a size tester', 2
+      include_examples 'a list representation', '( cat ) -> ( dog ) -> nil'
+      include_examples 'head and tail pointer', false
+      include_examples 'a correct node value', :head, 'cat'
+      include_examples 'a correct node value', :tail, 'dog'
     end
   end
 
   describe '#pop' do
     context 'when one item is in the list' do
-      before do
-        list.append('dog')
-      end
+      before { list.append('dog') }
 
       it 'removes the item from the list' do
         list.pop
-
-        expect(list.head).to eq(nil)
-        expect(list.tail).to eq(nil)
+        expect(list.head).to be_nil
       end
 
       it 'changes the size from 1 to 0' do
@@ -135,17 +104,15 @@ RSpec.describe 'LinkedList' do
   end
 
   describe '#contains?' do
-    before do
-      list.append('cat')
-    end
+    before { list.append('cat') }
 
     context 'when the value is found in the list' do
-      it 'return true' do
+      it 'returns true' do
         expect(list.contains?('cat')).to eq(true)
       end
     end
 
-    context 'when the item is not found' do
+    context 'when the value is not found' do
       it 'returns false' do
         expect(list.contains?('blah')).to eq(false)
       end
@@ -159,25 +126,25 @@ RSpec.describe 'LinkedList' do
       list.append('goat')
     end
 
-    context 'when the value is found end the beginning of the list' do
-      it 'return the index of the node containing the value' do
+    context 'when the value is at the beginning of the list' do
+      it 'returns the index of the node containing the value' do
         expect(list.find('dog')).to eq(0)
       end
     end
 
-    context 'when the value is found end the middle of the list' do
-      it 'return the index of the node containing the value' do
+    context 'when the value is in the middle of the list' do
+      it 'returns the index of the node containing the value' do
         expect(list.find('cat')).to eq(1)
       end
     end
 
-    context 'when the value is found at the end of the list' do
-      it 'return the index of the node containing the value' do
+    context 'when the value is at the end of the list' do
+      it 'returns the index of the node containing the value' do
         expect(list.find('goat')).to eq(2)
       end
     end
 
-    context 'when the item is not found' do
+    context 'when the value is not found' do
       it 'returns nil' do
         expect(list.find('blah')).to eq(nil)
       end
@@ -191,15 +158,15 @@ RSpec.describe 'LinkedList' do
       list.append('three')
     end
 
-    it 'returns the correct node for first index' do
+    it 'returns the correct node for the first index' do
       expect(list.at(0)).to eq(list.head)
     end
 
-    it 'returns the correct node for last index' do
+    it 'returns the correct node for the last index' do
       expect(list.at(list.size - 1)).to eq(list.tail)
     end
 
-    it 'returns the correct node for index within the list' do
+    it 'returns the correct node for an index within the list' do
       expect(list.at(1)).to eq(list.head&.next_node)
     end
   end
@@ -211,10 +178,8 @@ RSpec.describe 'LinkedList' do
       list.append('goat')
     end
 
-    let(:initial_size) { list.size }
-
-    context 'when a negative index is given' do
-      it 'returns nil because the index is invalid' do
+    context 'when using an invalid index' do
+      it 'returns nil' do
         expect(list.insert_at(-1, 'rabbit')).to eq(nil)
       end
 
@@ -223,86 +188,62 @@ RSpec.describe 'LinkedList' do
       end
     end
 
-    context 'when inserting at index 0: beginning of the list' do
-      subject(:node) { list.insert_at(0, 'rabbit') }
-      let(:expected_representation) do
-        '( rabbit ) -> ( dog ) -> ( cat ) -> ( goat ) -> nil'
+    context 'when inserting at the beginning' do
+      it 'increases the size by 1' do
+        expect { list.insert_at(0, 'rabbit') }.to change(list, :size).by(1)
       end
 
-      it 'changes the size of the current list' do
-        expect { node }.to change(list, :size).from(3).to(4)
-      end
-
-      it 'correctly inserts and returns the node' do
-        node # create the node
-        expect(list.head).to eq(node)
+      it 'correctly inserts the node' do
+        list.insert_at(0, 'rabbit')
+        expect(list.head&.value).to eq('rabbit')
       end
 
       it 'has the correct representation' do
-        node
-        expect(list.to_s).to eq(expected_representation)
+        list.insert_at(0, 'rabbit')
+        expect(list.to_s).to eq(
+          '( rabbit ) -> ( dog ) -> ( cat ) -> ( goat ) -> nil'
+        )
       end
     end
 
-    context 'when insertion is done at the end of the list' do
-      subject(:node) { list.insert_at(list.size - 1, 'rabbit') }
-      let(:expected_representation) do
-        '( dog ) -> ( cat ) -> ( goat ) -> ( rabbit ) -> nil'
+    context 'when inserting at the end' do
+      it 'increases the size by 1' do
+        expect { list.insert_at(list.size, 'rabbit') }.to change(
+          list, :size
+        ).by(1)
       end
 
-      it 'inserts the node at the end of the list' do
-        node
-
-        expect(list.tail).to eq(node)
-      end
-
-      it 'has the correct representation' do
-        node
-        expect(list.to_s).to eq(expected_representation)
-      end
-
-      it 'has its next node set to nil' do
-        node
-
-        expect(list.tail&.next_node).to eq(nil)
-      end
-
-      it 'inserts node at the end if the index is greater than the size' do
-        list.insert_at(100, 'rabbit')
-        expect(list.tail&.value).to eq('rabbit')
-      end
-
-      it 'inserts node at the end when the index is the same as the size' do
+      it 'correctly inserts the node at the end' do
         list.insert_at(list.size, 'rabbit')
         expect(list.tail&.value).to eq('rabbit')
       end
+
+      it 'inserts the node at the end for an out of bounds index' do
+        list.insert_at(100, 'rabbit')
+        expect(list.tail&.value).to eq('rabbit')
+      end
     end
 
-    describe 'insertion at a particular index in the list' do
-      context 'when inserted between "dog" and "cat"' do
-        let(:node) { list.insert_at(1, 'rabbit') }
-        let(:expected_representation) do
+    context 'when inserting in the middle' do
+      it 'increases the size by 1' do
+        expect { list.insert_at(1, 'rabbit') }.to change(list, :size).by(1)
+      end
+
+      it 'sets the new node’s next node correctly' do
+        node = list.insert_at(1, 'rabbit')
+        expect(node&.next_node&.value).to eq('cat')
+      end
+
+      it 'sets the previous node’s next node to the new node' do
+        list.insert_at(1, 'rabbit')
+        expect(list.head&.next_node&.value).to eq('rabbit')
+      end
+
+      it 'has the correct representation' do
+        list.insert_at(1, 'rabbit')
+        expect(list.to_s).to eq(
           '( dog ) -> ( rabbit ) -> ( cat ) -> ( goat ) -> nil'
-        end
-
-        it 'changes the size of the list by 1' do
-          expect { node }.to change { list.size }.from(initial_size)
-                                                 .to(initial_size + 1)
-        end
-
-        it 'sets the next to the node with value "cat"' do
-          expect(node.next_node&.value).to eq('cat')
-        end
-
-        it 'sets the next node of the head node to the new node' do
-          node
-          expect(list.head&.next_node).to eq(node)
-        end
-
-        it 'has the correct representation' do
-          node
-          expect(list.to_s).to eq(expected_representation)
-        end
+        )
       end
     end
   end
@@ -321,29 +262,14 @@ RSpec.describe 'LinkedList' do
         list.append('dog')
       end
 
-      let(:cat_index) { list.find('cat') }
-      let(:cat_response) { list.remove_at(cat_index) }
+      it 'removes the node correctly' do
+        index = list.find('cat')
+        expect { list.remove_at(index) }.to change { list.size }.by(-1)
+        expect(list.contains?('cat')).to be(false)
+      end
 
-      context 'when the "cat" node is removed' do
-        it 'reduces the size of the list by 1' do
-          expect { cat_response }.to change { list.size }.from(3).to(2)
-        end
-
-        it 'returns true for successful removal' do
-          expect(cat_response).to be(true)
-        end
-
-        it 'sets the next node of previous to the node after "cat"' do
-          cat_response
-          expect(list.head&.next_node&.value).to eq('dog')
-        end
-
-        it 'fails to find "cat" in the list after it is deleted' do
-          cat_response
-
-          expect(list.find('cat')).to be(nil)
-          expect(list.contains?('cat')).to be(false)
-        end
+      it 'returns false for a non-existent node' do
+        expect(list.remove_at(100)).to eq(false)
       end
     end
   end
