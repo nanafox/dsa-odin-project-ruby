@@ -1,9 +1,8 @@
 # frozen_string_literal: true
 
-require 'rspec'
 require_relative '../../recursion/quiz/factorial'
 
-RSpec.describe '#factorial' do
+RSpec.describe '#factorial', type: :method do
   context 'when n is 0' do
     it 'returns 1' do
       expect(factorial(0)).to eq(1)

@@ -1,9 +1,8 @@
 # frozen_string_literal: true
 
-require 'rspec'
 require_relative '../../recursion/quiz/palindrome'
 
-RSpec.describe '#palindrome' do
+RSpec.describe '#palindrome', type: :method do
   context 'when the word is not a palindrome' do
     %w[come race eat customize palindrome].each do |word|
       it "returns false when the word is #{word}" do

@@ -2,7 +2,9 @@
 
 require_relative '../../recursion/project/merge_sort'
 
-RSpec.describe '#merge_sort' do
+# rubocop:disable Metrics/BlockLength
+
+RSpec.describe '#merge_sort', type: :method do
   context 'when the list is empty' do
     it 'returns an empty list' do
       expect(merge_sort([])).to eq([])
@@ -48,3 +50,5 @@ RSpec.describe '#merge_sort' do
     end
   end
 end
+
+# rubocop:enable Metrics/BlockLength

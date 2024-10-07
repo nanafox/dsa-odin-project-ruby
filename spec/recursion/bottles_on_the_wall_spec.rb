@@ -1,9 +1,8 @@
 # frozen_string_literal: true
 
-require 'rspec'
 require_relative '../../recursion/quiz/bottles_on_the_wall'
 
-RSpec.describe '#bottles_on_the_wall' do
+RSpec.describe '#bottles_on_the_wall', type: :method do
   context "when there's no more bottles left" do
     it 'prints the correct message' do
       expected_output = "no more bottles of beer on the wall\n"

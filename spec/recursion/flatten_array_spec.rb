@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
-require 'rspec'
 require_relative '../../recursion/quiz/flatten_array'
 
-RSpec.describe '#flatten_array!' do
+# rubocop:disable Metrics/BlockLength
+
+RSpec.describe '#flatten_array!', type: :method do
   context 'when the array is empty' do
     it 'returns an empty array' do
       expect(flatten_array!([])).to eq([])
@@ -51,3 +52,5 @@ RSpec.describe '#flatten_array!' do
     end
   end
 end
+
+# rubocop:enable Metrics/BlockLength

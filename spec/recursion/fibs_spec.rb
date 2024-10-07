@@ -2,7 +2,7 @@
 
 require_relative '../../recursion/project/fibs'
 
-RSpec.describe '#fibs' do
+RSpec.describe '#fibs', type: :method do
   it 'returns empty array for zero' do
     expect(fibs(0)).to eq([])
   end
